@@ -1,44 +1,43 @@
 import pandas as pd
 from readCSV import readCsv
-from CsvInfo import printInfo
-from AnalysisAndVisualization import AAV
+from fastapi import FastAPI
+import uvicorn
 from DataPreprocessing import dataPreprocessing
 from LogisticRegression import logisticRegression
 from SGD import SGDModel
 from DecisionTree import decisionTree
 from EnsembleLearning import ensembleLearning
-from PerformanceComparison import ModelPC
-from CrossValidation import crossValidation
-from GridSearchCV import gridSearchCV
-def main():
+
+app = FastAPI()
+
+def format_metric(model_name:str, res:list):
+    return{
+        "ModelName": model_name,            
+        "Accuracy": round(float(res[0]), 4), 
+        "Precision": round(float(res[1]), 4),
+        "Recall": round(float(res[2]), 4),
+        "F1": round(float(res[3]), 4)
+    }
+
+@app.get("/api/model-performance")
+def model_performance():
     df = readCsv()
 
     preprocessor, X_train, X_test, y_train, y_test = dataPreprocessing(df)    
     logistic_results = logisticRegression(preprocessor, X_train, X_test, y_train, y_test)    
-    ssg_results = SGDModel(preprocessor, X_train, X_test, y_train, y_test)    
+    sgd_results = SGDModel(preprocessor, X_train, X_test, y_train, y_test)    
     decisionTree_results, tree_pred = decisionTree(preprocessor, X_train, X_test, y_train, y_test)  
     rf_gb_results = ensembleLearning(preprocessor, X_train, X_test, y_train, y_test, tree_pred)
     randomForest_results = rf_gb_results[0]
-    gradientBoosting_result = rf_gb_results[1]
+    gradientBoosting_results = rf_gb_results[1]   
 
-    all_results = [
-        logistic_results,
-        ssg_results,
-        decisionTree_results,
-        randomForest_results,
-        gradientBoosting_result
-        ]
-    model_names = [
-        "Logistic Regression",
-        "SSG Classifier",
-        "Decision Tree",
-        "Random Forest",
-        "Gradient Boosting"
+    response_data = [
+        format_metric("Logistic Regression", logistic_results),
+        format_metric("SGD Classifier", sgd_results),
+        format_metric("Decision Tree", decisionTree_results),
+        format_metric("Random Forest", randomForest_results),
+        format_metric("Gradient Boosting", gradientBoosting_results)
     ]
-    result_df = pd.DataFrame(data=all_results, columns=["Accuracy", "Precision", "Recall", "F1"])
-    result_df.insert(0, "모델", model_names)
-
-    print("\n 모델별 성능 비교")
-    print(result_df.to_string(index=False, float_format="%.4f"))
+    return response_data
 if __name__ == "__main__":
-    main()
+    uvicorn.run(app, host="127.0.0.1", port=8000)
