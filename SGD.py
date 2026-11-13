@@ -20,5 +20,5 @@ def SGDModel(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.Dat
     recall = recall_score(y_test, pred)
     f1 = f1_score(y_test, pred)
 
-    result = classification_report(y_test, pred)
-    return [accuracy, precision, recall, f1]
+    results = [accuracy, precision, recall, f1]
+    return results, sgd_model

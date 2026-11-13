@@ -7,8 +7,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 
-def decisionTree(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, maxDepth=3):
-    tree_model = Pipeline([("preprocessor", preprocessor), ("model", DecisionTreeClassifier(max_depth=maxDepth, random_state=42))])
+def decisionTree(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, max_depth=None):
+    tree_model = Pipeline([("preprocessor", preprocessor), ("model", DecisionTreeClassifier(max_depth=max_depth, random_state=42))])
     tree_model.fit(X_train, y_train)
     pred = tree_model.predict(X_test)
     
@@ -16,4 +16,5 @@ def decisionTree(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd
     precision = precision_score(y_test, pred)
     recall = recall_score(y_test, pred)
     f1 = f1_score(y_test, pred)
-    return [accuracy, precision, recall, f1], pred
+    results = [accuracy, precision, recall, f1]
+    return results, pred, tree_model

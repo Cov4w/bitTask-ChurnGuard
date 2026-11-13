@@ -24,4 +24,5 @@ def logisticRegression(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_t
     precision = precision_score(y_test, pred)
     recall = recall_score(y_test, pred)
     f1 = f1_score(y_test, pred)
-    return [accuracy, precision, recall, f1]
+    results = [accuracy, precision, recall, f1]
+    return  results, logistic_model
