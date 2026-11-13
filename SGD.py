@@ -8,18 +8,13 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import classification_report
 
-def SGDModel(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame):
-    sgd_model = Pipeline([("preprocessor", preprocessor),("model", SGDClassifier(loss="log_loss", max_iter=2000, random_state=42))])
+def SGDModel(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, alpha_value=0.0001):
+    sgd_model = Pipeline([("preprocessor", preprocessor),("model", SGDClassifier(alpha=alpha_value, loss="log_loss", max_iter=2000, random_state=42))])
     sgd_model.fit(X_train, y_train)
 
     # 예측 및 평가
     pred = sgd_model.predict(X_test)
-    """
-    print("SGD Accuracy : ", accuracy_score(y_test, pred))
-    print("SGD Precision : ", precision_score(y_test, pred))
-    print("SGD Recall : ", recall_score(y_test, pred))
-    print("SGD F1 : ", f1_score(y_test, pred))
-    """
+   
     accuracy = accuracy_score(y_test, pred)
     precision = precision_score(y_test, pred)
     recall = recall_score(y_test, pred)

@@ -10,16 +10,13 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import precision_score
 
-def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, tree_pred:np.ndarray):
+def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, 
+                     n_estimators_val=100, learning_rate_val=0.1):
     rf_model = Pipeline([("preprocessor", preprocessor), 
-                         ("model", RandomForestClassifier(n_estimators=100, max_depth=7, random_state=42, n_jobs=-1))])
+                         ("model", RandomForestClassifier(n_estimators=n_estimators_val, max_depth=7, random_state=42, n_jobs=-1))])
     rf_model.fit(X_train, y_train)
     rf_pred = rf_model.predict(X_test)
-    """
-    print("Random Forest Accuracy : ", accuracy_score(y_test, rf_pred))
-    print("Random Forest Recall : ", recall_score(y_test, rf_pred))
-    print("Random Forest F1 : ", f1_score(y_test, rf_pred))
-    """
+    
     rf_accuracy = accuracy_score(y_test, rf_pred)
     rf_precision = precision_score(y_test, rf_pred)
     rf_recall = recall_score(y_test, rf_pred)
@@ -27,20 +24,10 @@ def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_tes
 
     #그래디언트 부스팅 모델 생성
     gb_model = Pipeline([("preprocessor", preprocessor), 
-                         ("model", GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42))])
+                         ("model", GradientBoostingClassifier(n_estimators=100, learning_rate=learning_rate_val, max_depth=3, random_state=42))])
     gb_model.fit(X_train, y_train)
     gb_pred = gb_model.predict(X_test)
-    """
-    print("Gradient Boosting Accuracy : ", accuracy_score(y_test, gb_pred))
-    print("Gradient Boosting Recall : ", recall_score(y_test, gb_pred))
-    print("Gradient Boosting F1 : ", f1_score(y_test, gb_pred))
-    print("Decision Tree")
-    print(classification_report(y_test, tree_pred))
-    print("Random Forest")
-    print(classification_report(y_test, rf_pred))
-    print("Gradient Boosting")
-    print(classification_report(y_test, gb_pred))
-    """
+    
     gb_accuracy = accuracy_score(y_test, gb_pred)
     gb_precision = precision_score(y_test, gb_pred)
     gb_recall = recall_score(y_test, gb_pred)
