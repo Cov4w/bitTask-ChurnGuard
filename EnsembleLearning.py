@@ -8,6 +8,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
+from sklearn.metrics import precision_score
 
 def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame, tree_pred:np.ndarray):
     rf_model = Pipeline([("preprocessor", preprocessor), 
@@ -19,6 +20,11 @@ def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_tes
     print("Random Forest Recall : ", recall_score(y_test, rf_pred))
     print("Random Forest F1 : ", f1_score(y_test, rf_pred))
     """
+    rf_accuracy = accuracy_score(y_test, rf_pred)
+    rf_precision = precision_score(y_test, rf_pred)
+    rf_recall = recall_score(y_test, rf_pred)
+    rf_f1 = f1_score(y_test, rf_pred)
+
     #그래디언트 부스팅 모델 생성
     gb_model = Pipeline([("preprocessor", preprocessor), 
                          ("model", GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42))])
@@ -35,4 +41,8 @@ def ensembleLearning(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_tes
     print("Gradient Boosting")
     print(classification_report(y_test, gb_pred))
     """
-    return rf_model, gb_model
+    gb_accuracy = accuracy_score(y_test, gb_pred)
+    gb_precision = precision_score(y_test, gb_pred)
+    gb_recall = recall_score(y_test, gb_pred)
+    gb_f1 = f1_score(y_test, gb_pred)
+    return [[rf_accuracy, rf_precision, rf_recall, rf_f1], [gb_accuracy, gb_precision, gb_recall, gb_f1]]

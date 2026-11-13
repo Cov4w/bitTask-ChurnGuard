@@ -13,12 +13,17 @@ def SGDModel(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.Dat
     sgd_model.fit(X_train, y_train)
 
     # 예측 및 평가
-    sgd_pred = sgd_model.predict(X_test)
+    pred = sgd_model.predict(X_test)
     """
-    print("SGD Accuracy : ", accuracy_score(y_test, sgd_pred))
-    print("SGD Precision : ", precision_score(y_test, sgd_pred))
-    print("SGD Recall : ", recall_score(y_test, sgd_pred))
-    print("SGD F1 : ", f1_score(y_test, sgd_pred))
+    print("SGD Accuracy : ", accuracy_score(y_test, pred))
+    print("SGD Precision : ", precision_score(y_test, pred))
+    print("SGD Recall : ", recall_score(y_test, pred))
+    print("SGD F1 : ", f1_score(y_test, pred))
     """
-    result = classification_report(y_test, sgd_pred)
-    return result, sgd_model
+    accuracy = accuracy_score(y_test, pred)
+    precision = precision_score(y_test, pred)
+    recall = recall_score(y_test, pred)
+    f1 = f1_score(y_test, pred)
+
+    result = classification_report(y_test, pred)
+    return [accuracy, precision, recall, f1]

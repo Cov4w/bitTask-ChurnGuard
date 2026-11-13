@@ -3,6 +3,11 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import log_loss
 
 def logisticRegression(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_test:pd.DataFrame, y_train:pd.DataFrame, y_test:pd.DataFrame):
     # 모델 생성
@@ -14,15 +19,9 @@ def logisticRegression(preprocessor:ColumnTransformer, X_train:pd.DataFrame, X_t
     
     # 예측
     pred = logistic_model.predict(X_test)
-    """
-    print("예측 결과 : ", pred[:20])
-    print("실제 결과 : ", y_test.values[:20])
-    # 모델 평가
-    print("Accuracy : ", accuracy_score(y_test, pred))
-    print("Precision : ", precision_score(y_test, pred))
-    print("Recall : ", recall_score(y_test, pred))
-    print("F1-score : ", f1_score(y_test, pred))
-    print("Log Loss : ", log_loss(y_test, pred))
-    """
-    result = classification_report(y_test, pred)
-    return result, logistic_model
+    
+    accuracy = accuracy_score(y_test, pred)
+    precision = precision_score(y_test, pred)
+    recall = recall_score(y_test, pred)
+    f1 = f1_score(y_test, pred)
+    return [accuracy, precision, recall, f1]

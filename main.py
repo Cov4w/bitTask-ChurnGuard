@@ -13,20 +13,32 @@ from GridSearchCV import gridSearchCV
 def main():
     df = readCsv()
 
-    #printInfo(df)
-    #AAV(df)
-    preprocessor, X_train, X_test, y_train, y_test = dataPreprocessing(df)
-    
-    logistic_pred, logistic_model = logisticRegression(preprocessor, X_train, X_test, y_train, y_test)    
-    ssg_pred, sgd_model = SGDModel(preprocessor, X_train, X_test, y_train, y_test)    
-    print("logistic_pred : \n", logistic_pred)
-    print("ssg_pred : \n", ssg_pred)
-    
-    tree_pred, tree_model = decisionTree(preprocessor, X_train, X_test, y_train, y_test)
-    rf_model, gb_model = ensembleLearning(preprocessor, X_train, X_test, y_train, y_test, tree_pred)
+    preprocessor, X_train, X_test, y_train, y_test = dataPreprocessing(df)    
+    logistic_results = logisticRegression(preprocessor, X_train, X_test, y_train, y_test)    
+    ssg_results = SGDModel(preprocessor, X_train, X_test, y_train, y_test)    
+    decisionTree_results, tree_pred = decisionTree(preprocessor, X_train, X_test, y_train, y_test)  
+    rf_gb_results = ensembleLearning(preprocessor, X_train, X_test, y_train, y_test, tree_pred)
+    randomForest_results = rf_gb_results[0]
+    gradientBoosting_result = rf_gb_results[1]
 
-    models, result_df = ModelPC(logistic_model, sgd_model, tree_model, rf_model, gb_model, X_test, y_test)
-    #crossValidation(models, X_train, y_train)
-    gridSearchCV(rf_model, X_train, X_test, y_train, y_test)
+    all_results = [
+        logistic_results,
+        ssg_results,
+        decisionTree_results,
+        randomForest_results,
+        gradientBoosting_result
+        ]
+    model_names = [
+        "Logistic Regression",
+        "SSG Classifier",
+        "Decision Tree",
+        "Random Forest",
+        "Gradient Boosting"
+    ]
+    result_df = pd.DataFrame(data=all_results, columns=["Accuracy", "Precision", "Recall", "F1"])
+    result_df.insert(0, "모델", model_names)
+
+    print("\n 모델별 성능 비교")
+    print(result_df.to_string(index=False, float_format="%.4f"))
 if __name__ == "__main__":
     main()
